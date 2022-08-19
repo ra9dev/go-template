@@ -26,3 +26,7 @@ environment:
 	$(MAKE) git-hooks
 	$(MAKE) deps
 	docker-compose up --force-recreate --remove-orphans -d
+
+run-api:
+	$(call describe_job,"Starting API server")
+	go run cmd/*.go api
