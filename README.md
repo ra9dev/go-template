@@ -1,0 +1,20 @@
+# go-template
+
+Template for productive high-tech creators
+
+### Features
+
+- Multi-command support with https://github.com/spf13/cobra 🤾🏼‍♀️ 🤾🏼 🤾🏼‍♂️
+- Shared git hooks: fast linter + goimports on `commit`, full linter + tests + dependencies update on `push`. Run `make environment` for setup 🪝
+- Lightweight logger that can be used both locally and globaly with https://github.com/uber-go/zap ✉️
+- Extensive application configuration through file (yaml by default), env, flags with https://github.com/spf13/viper 💽
+- Friendly `graceful shutdown` that can be used in any part of your code 🤳 
+- Database support both for local development and migrations (postgres by default), can be changed easily at `db.make` and `docker-compose.yml`. Migrations engine - https://github.com/golang-migrate/migrate 💾
+- Smart goimports linting that keeps your imports within 3 blocks via https://github.com/incu6us/goimports-reviser 🗄
+
+### To Be Done
+- Docker image
+- Admin http + swagger
+- SRE best practices support: tracing, metrics, etc.
+- Protocols support: grpc, quic, etc.
+- Dynamic configuration via etcd/consul/etc
