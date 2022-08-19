@@ -1,10 +1,8 @@
 # go-template
 
-### Golang project template with a great developer experience
+Template for productive high-tech creators
 
-For those who want to start writing projects easily.
-
-#### Features
+### Features
 
 - Multi-command support with https://github.com/spf13/cobra 🤾🏼‍♀️ 🤾🏼 🤾🏼‍♂️
 - Shared git hooks: fast linter on `commit`, full linter + tests + dependencies update on `push` 🪝
