@@ -2,13 +2,13 @@ package main
 
 import (
 	"context"
-	"github.com/ra9dev/go-template/internal/config"
 	"os/signal"
 	"syscall"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
+	"github.com/ra9dev/go-template/internal/config"
 	"github.com/ra9dev/go-template/pkg/log"
 	"github.com/ra9dev/go-template/pkg/shutdown"
 )

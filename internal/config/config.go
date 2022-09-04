@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+
 	"github.com/ra9dev/go-template/pkg/config"
 	"github.com/ra9dev/go-template/pkg/log"
 )
