@@ -1,5 +1,3 @@
-include func.make
-
 DB_PORT ?= 5432
 DB_USER ?= postgres
 DB_NAME ?= go-template

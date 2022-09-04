@@ -1,5 +1,3 @@
-include func.make
-
 DOCKER_TAG ?= go-template
 docker-build:
 	$(call describe_job,"Building docker image '$(DOCKER_TAG)'")

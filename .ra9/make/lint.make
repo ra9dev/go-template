@@ -1,5 +1,3 @@
-include func.make
-
 imports:
 	$(call describe_job,"Running imports")
 	$(MAKE) lint-deps

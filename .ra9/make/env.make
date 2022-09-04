@@ -1,8 +1,3 @@
-include func.make
-
-DIR:=$(patsubst %/,%,$(dir $(abspath $(lastword $(MAKEFILE_LIST)))))
-LOCAL_BIN:=$(DIR)/bin
-
 GOLANG_CI_LINT_VERSION ?= v1.46.2
 lint-deps:
 ifeq ("$(wildcard $(LOCAL_BIN)/golangci-lint)","")

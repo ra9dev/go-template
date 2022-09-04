@@ -2,10 +2,10 @@
 .vscode/
 bin/
 githooks/
+.ra9/
 
 .gitignore
 .golangci.yml
 docker-compose.yml
-*.make
 Makefile
 README.md
