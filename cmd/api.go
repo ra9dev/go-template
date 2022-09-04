@@ -4,6 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	grpcAPI "github.com/ra9dev/go-template/internal/api/grpc"
+	example "github.com/ra9dev/go-template/pb"
+	"google.golang.org/grpc"
+	"net"
 	"net/http"
 	"time"
 
@@ -30,10 +34,10 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
 		httpSrvRun := func(srv *http.Server) error {
-			zap.S().Infof("Listening http on %s...", srv.Addr)
+			zap.S().Infof("Listening HTTP on %s...", srv.Addr)
 
 			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-				return fmt.Errorf("http server failed to serve: %w", err)
+				return fmt.Errorf("HTTP server failed to serve: %w", err)
 			}
 
 			return nil
@@ -53,6 +57,23 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 			adminHTTP := newHTTPServer(cfg.Ports.AdminHTTP)(adminHTTPHandler)
 
 			return httpSrvRun(adminHTTP)
+		})
+
+		group.Go(func() error {
+			grpcListener, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Ports.GRPC))
+			if err != nil {
+				return fmt.Errorf("failed to listen port %d for grpc: %w", cfg.Ports.GRPC, err)
+			}
+
+			zap.S().Infof("Listening GRPC on :%d...", cfg.Ports.GRPC)
+
+			grpcServer := newGRPCServer(cfg.Ports.GRPC)
+
+			if err = grpcServer.Serve(grpcListener); err != nil {
+				return fmt.Errorf("GRPC server failed to serve: %w", err)
+			}
+
+			return nil
 		})
 
 		if err := group.Wait(); err != nil {
@@ -91,11 +112,26 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 		}
 
 		shutdown.Add(func(ctx context.Context) {
-			zap.S().Infof("Shutting down http on %s", addr)
+			zap.S().Infof("Shutting down HTTP on %s", addr)
 			_ = srv.Shutdown(ctx)
 			zap.S().Info("HTTP shutdown succeeded!")
 		})
 
 		return &srv
 	}
+}
+
+func newGRPCServer(port uint) *grpc.Server {
+	srv := grpc.NewServer()
+	exampleService := grpcAPI.NewExampleService()
+
+	example.RegisterGreeterServer(srv, exampleService)
+
+	shutdown.Add(func(ctx context.Context) {
+		zap.S().Infof("Shutting down GRPC on :%d", port)
+		srv.GracefulStop()
+		zap.S().Info("GRPC shutdown succeeded!")
+	})
+
+	return srv
 }

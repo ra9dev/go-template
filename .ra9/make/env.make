@@ -22,12 +22,23 @@ ifeq ("$(wildcard $(LOCAL_BIN)/swag)","")
 	GOBIN=$(LOCAL_BIN) go install -mod=mod github.com/swaggo/swag/cmd/swag@$(SWAG_GO_VERSION)
 endif
 
+PROTOC_GEN_GO_VERSION ?= v1.28
+PROTOC_GEN_GO_GRPC_VERSION ?= v1.2
+grpc-deps:
+ifeq ("$(wildcard $(LOCAL_BIN)/protoc-gen-go)","")
+	GOBIN=$(LOCAL_BIN) go install -mod=mod google.golang.org/protobuf/cmd/protoc-gen-go@$(PROTOC_GEN_GO_VERSION)
+endif
+ifeq ("$(wildcard $(LOCAL_BIN)/protoc-gen-go-grpc)","")
+	GOBIN=$(LOCAL_BIN) go install -mod=mod google.golang.org/grpc/cmd/protoc-gen-go-grpc@$(PROTOC_GEN_GO_GRPC_VERSION)
+endif
+
 deps:
 	$(call describe_job,"Installing dependencies")
 	$(MAKE) lint-deps
 	$(MAKE) imports-deps
 	$(MAKE) migrate-deps
 	$(MAKE) swagger-deps
+	$(MAKE) grpc-deps
 	go mod tidy
 
 git-hooks:
@@ -46,6 +57,19 @@ swagger:
 	$(call describe_job,"Generating swagger docs")
 	$(MAKE) swagger-deps
 	$(LOCAL_BIN)/swag init -g internal/api/admin/doc.go -p snakecase -o docs --parseInternal
+
+PROTOC := $(shell command -v protoc 2> /dev/null)
+PROTO_PATH ?= ./pb/*.proto
+grpc:
+ifndef PROTOC
+	$(error "protoc is not installed. Visit https://grpc.io/docs/protoc-installation")
+endif
+	$(call describe_job,"Generating grpc code")
+	protoc \
+    	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=. --go_opt=paths=source_relative --go_opt=M$(PROTO_PATH)=./pb \
+    	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=. --go-grpc_opt=paths=source_relative --go-grpc_opt=M$(PROTO_PATH)=./pb \
+    	-I /usr/local/include:$(THIRD_PARTY_PROTO_PATH):. \
+    	$(PROTO_PATH)
 
 run-api:
 	$(call describe_job,"Starting API server")

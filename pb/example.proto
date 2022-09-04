@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package example;
+option go_package = "github.com/ra9dev/go-template/pb/example";
+
+// Example of proto import
+import "google/protobuf/empty.proto";
+
+// The greeting service definition.
+service Greeter {
+  // Sends a greeting
+  rpc SayHello (google.protobuf.Empty) returns (HelloReply) {}
+}
+
+// The response message containing the greetings
+message HelloReply {
+  string message = 1;
+}
