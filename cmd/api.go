@@ -4,9 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	grpcAPI "github.com/ra9dev/go-template/internal/api/grpc"
-	example "github.com/ra9dev/go-template/pb"
-	"google.golang.org/grpc"
 	"net"
 	"net/http"
 	"time"
@@ -15,9 +12,12 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
+	"google.golang.org/grpc"
 
 	adminAPI "github.com/ra9dev/go-template/internal/api/admin"
+	grpcAPI "github.com/ra9dev/go-template/internal/api/grpc"
 	"github.com/ra9dev/go-template/internal/config"
+	example "github.com/ra9dev/go-template/pb"
 	"github.com/ra9dev/go-template/pkg/shutdown"
 )
 

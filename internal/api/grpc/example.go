@@ -2,8 +2,10 @@ package grpc
 
 import (
 	"context"
-	example "github.com/ra9dev/go-template/pb"
+
 	"google.golang.org/protobuf/types/known/emptypb"
+
+	example "github.com/ra9dev/go-template/pb"
 )
 
 type ExampleService struct {
