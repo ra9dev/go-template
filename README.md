@@ -11,10 +11,11 @@ Template for productive high-tech creators
 - Friendly `graceful shutdown` that can be used in any part of your code 🤳 
 - Database support both for local development and migrations (postgres by default), can be changed easily at `db.make` and `docker-compose.yml`. Migrations engine - https://github.com/golang-migrate/migrate 💾
 - Smart goimports linting that keeps your imports within 3 blocks via https://github.com/incu6us/goimports-reviser 🗄
+- Multi-port api server for: `http, admin_http, grpc`. Note: `grpc` is still in progress
+- Swagger spec generation with https://github.com/swaggo/swag (Admin HTTP) 😎
 
 ### To Be Done
 - Docker image
-- Admin http + swagger
 - SRE best practices support: tracing, metrics, etc.
 - Protocols support: grpc, quic, etc.
 - Dynamic configuration via etcd/consul/etc

@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"github.com/ra9dev/go-template/internal/config"
 	"os/signal"
 	"syscall"
 
@@ -18,7 +19,7 @@ func main() {
 		Short: "Main entry-point command for the application",
 	}
 
-	cfg, err := NewConfig()
+	cfg, err := config.NewConfig()
 	if err != nil {
 		zap.S().Fatalf("failed to prepare config: %w", err)
 	}
@@ -38,7 +39,7 @@ func main() {
 	defer cancel()
 
 	defer func() {
-		zap.S().Infof("Shutdown timeout is %.1f seconds", shutdown.Timeout.Seconds())
+		zap.S().Infof("Shutdown timeout is %.1f seconds", shutdown.Timeout().Seconds())
 		shutdown.Wait()
 		zap.S().Info("Shutdown has been completed!")
 	}()

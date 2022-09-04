@@ -22,7 +22,7 @@ func (s *GracefulShutdown) Add(fn CallbackFunc) {
 }
 
 func (s *GracefulShutdown) ForceShutdown() {
-	shutdownCTX, shutdownCancel := context.WithTimeout(context.Background(), Timeout)
+	shutdownCTX, shutdownCancel := context.WithTimeout(context.Background(), Timeout())
 	defer shutdownCancel()
 
 	s.mu.RLock()
@@ -46,5 +46,5 @@ func (s *GracefulShutdown) ForceShutdown() {
 }
 
 func (s GracefulShutdown) Wait() {
-	time.Sleep(Timeout)
+	time.Sleep(Timeout())
 }

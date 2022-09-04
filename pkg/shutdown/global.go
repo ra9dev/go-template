@@ -10,9 +10,11 @@ import (
 
 var (
 	globalShutdown GracefulShutdown
-
-	Timeout = time.Second * 5
 )
+
+func Timeout() time.Duration {
+	return time.Second * 5
+}
 
 func init() {
 	globalShutdown = GracefulShutdown{

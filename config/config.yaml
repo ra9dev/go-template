@@ -1,3 +1,7 @@
 log_level: debug
 ports:
   http: 80
+  grpc: 82
+  admin_http: 84
+data_store:
+  url: postgres://postgres@localhost:5432/go-template?sslmode=disable

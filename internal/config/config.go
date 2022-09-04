@@ -1,8 +1,7 @@
-package main
+package config
 
 import (
 	"fmt"
-
 	"github.com/ra9dev/go-template/pkg/config"
 	"github.com/ra9dev/go-template/pkg/log"
 )
@@ -16,14 +15,19 @@ const (
 )
 
 type Config struct {
-	LogLevel log.Level   `mapstructure:"log_level"`
-	Ports    PortsConfig `mapstructure:"ports"`
+	LogLevel  log.Level       `mapstructure:"log_level"`
+	Ports     PortsConfig     `mapstructure:"ports"`
+	DataStore DataStoreConfig `mapstructure:"data_store"`
 }
 
 type PortsConfig struct {
 	HTTP      uint `mapstructure:"http"`
 	GRPC      uint `mapstructure:"grpc"`
 	AdminHTTP uint `mapstructure:"admin_http"`
+}
+
+type DataStoreConfig struct {
+	URL string `mapstructure:"url"`
 }
 
 func NewConfig() (Config, error) {

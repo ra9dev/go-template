@@ -1,0 +1,34 @@
+{
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "schemes": [
+        "http",
+        "https"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "go-template based project",
+        "title": "go-template API",
+        "termsOfService": "https://github.com/ra9dev/go-template",
+        "contact": {
+            "name": "ra9dev",
+            "url": "https://ra9.dev",
+            "email": "ra9dev@gmail.com"
+        },
+        "version": "1.0"
+    },
+    "host": "api.go-template.com",
+    "basePath": "/v1",
+    "paths": {},
+    "securityDefinitions": {
+        "jwt": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
+}

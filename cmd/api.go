@@ -12,6 +12,8 @@ import (
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 
+	adminAPI "github.com/ra9dev/go-template/internal/api/admin"
+	"github.com/ra9dev/go-template/internal/config"
 	"github.com/ra9dev/go-template/pkg/shutdown"
 )
 
@@ -20,30 +22,37 @@ const (
 	writeTimeout = 30 * time.Second
 )
 
-func APIServerCMD(cfg Config) *cobra.Command {
+func APIServerCMD(cfg config.Config) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "api",
 		Short: "api server of project",
 	}
 
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		group, _ := errgroup.WithContext(cmd.Context())
-		group.Go(func() error {
-			httpSrv := httpServer(cfg.Ports.HTTP)
+		httpSrvRun := func(srv *http.Server) error {
+			zap.S().Infof("Listening http on %s...", srv.Addr)
 
-			zap.S().Infof("Listening http on %d...", cfg.Ports.HTTP)
-
-			shutdown.Add(func(ctx context.Context) {
-				zap.S().Info("Shutting down http")
-				_ = httpSrv.Shutdown(ctx)
-				zap.S().Info("HTTP shutdown succeeded!")
-			})
-
-			if err := httpSrv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 				return fmt.Errorf("http server failed to serve: %w", err)
 			}
 
 			return nil
+		}
+
+		group, _ := errgroup.WithContext(cmd.Context())
+
+		group.Go(func() error {
+			clientHTTPHandler := newHTTPClientHandler()
+			clientHTTP := newHTTPServer(cfg.Ports.HTTP)(clientHTTPHandler)
+
+			return httpSrvRun(clientHTTP)
+		})
+
+		group.Go(func() error {
+			adminHTTPHandler := newHTTPAdminHandler()
+			adminHTTP := newHTTPServer(cfg.Ports.AdminHTTP)(adminHTTPHandler)
+
+			return httpSrvRun(adminHTTP)
 		})
 
 		if err := group.Wait(); err != nil {
@@ -56,15 +65,37 @@ func APIServerCMD(cfg Config) *cobra.Command {
 	return cmd
 }
 
-func httpServer(httpPort uint) *http.Server {
+func newHTTPClientHandler() *chi.Mux {
 	mux := chi.NewMux()
 
-	srv := &http.Server{
-		Addr:         fmt.Sprintf(":%d", httpPort),
-		Handler:      mux,
-		ReadTimeout:  readTimeout,
-		WriteTimeout: writeTimeout,
-	}
+	return mux
+}
 
-	return srv
+func newHTTPAdminHandler() *chi.Mux {
+	mux := chi.NewMux()
+
+	mux.Mount("/v1", adminAPI.NewRouter())
+
+	return mux
+}
+
+func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
+	return func(handler http.Handler) *http.Server {
+		addr := fmt.Sprintf(":%d", port)
+
+		srv := http.Server{
+			Addr:         addr,
+			Handler:      handler,
+			ReadTimeout:  readTimeout,
+			WriteTimeout: writeTimeout,
+		}
+
+		shutdown.Add(func(ctx context.Context) {
+			zap.S().Info("Shutting down http on %s", addr)
+			_ = srv.Shutdown(ctx)
+			zap.S().Info("HTTP shutdown succeeded!")
+		})
+
+		return &srv
+	}
 }

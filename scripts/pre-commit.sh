@@ -1,4 +1,6 @@
 #!/bin/sh
 
+make deps
 make imports
-make lint-fast
+make lint
+make swagger
