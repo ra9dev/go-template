@@ -46,7 +46,6 @@ environment:
 	docker-compose up --force-recreate --remove-orphans -d
 	sleep 5
 	$(MAKE) migrate
-	$(MAKE) ads-migrate
 
 swagger:
 	$(call describe_job,"Generating swagger docs")
