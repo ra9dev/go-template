@@ -91,7 +91,7 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 		}
 
 		shutdown.Add(func(ctx context.Context) {
-			zap.S().Info("Shutting down http on %s", addr)
+			zap.S().Infof("Shutting down http on %s", addr)
 			_ = srv.Shutdown(ctx)
 			zap.S().Info("HTTP shutdown succeeded!")
 		})

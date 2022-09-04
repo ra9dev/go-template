@@ -1,0 +1,11 @@
+.idea/
+.vscode/
+bin/
+githooks/
+
+.gitignore
+.golangci.yml
+docker-compose.yml
+*.make
+Makefile
+README.md
