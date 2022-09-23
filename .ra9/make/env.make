@@ -13,7 +13,7 @@ endif
 MIGRATE_VERSION ?= v4.15.2
 migrate-deps:
 ifeq ("$(wildcard $(LOCAL_BIN)/migrate)","")
-	GOBIN=$(LOCAL_BIN) go install -tags '$(DB_DRIVER),$(ADS_DB_DRIVER)' -mod=mod github.com/golang-migrate/migrate/v4/cmd/migrate@$(MIGRATE_VERSION)
+	GOBIN=$(LOCAL_BIN) go install -tags '$(DB_DRIVER)' -mod=mod github.com/golang-migrate/migrate/v4/cmd/migrate@$(MIGRATE_VERSION)
 endif
 
 SWAG_GO_VERSION ?= v1.8.4
