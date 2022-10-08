@@ -55,6 +55,7 @@ func setupLogger(cfg config.Config) error {
 	}
 
 	shutdown.Add(func(_ context.Context) {
+		// ignoring err because there is no buffer for stderr
 		_ = zap.L().Sync()
 	})
 
