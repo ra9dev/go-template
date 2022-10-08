@@ -13,7 +13,7 @@ Template for productive high-tech creators
 
 - Shared git hooks: on [commit](./scripts/pre-commit.sh) and on [push](./scripts/pre-push.sh) 🪝
 - Friendly [graceful shutdown](./pkg/shutdown/global.go) that can be used in any part of your code 🤳
-- [Smart fixer](https://github.com/incu6us/goimports-reviser) for your imports keeping them within 3 blocks 🗄
+- [Smart fixer](https://github.com/incu6us/goimports-reviser) for your imports, keeping it within 3 blocks 🗄
 
 ### Delivery
 
