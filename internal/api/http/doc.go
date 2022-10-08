@@ -1,4 +1,4 @@
-package admin
+package http
 
 // @title go-template API
 // @version 1.0

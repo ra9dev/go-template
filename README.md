@@ -17,5 +17,5 @@ Template for productive high-tech creators
 
 ### To Be Done
 - SRE best practices support: tracing, metrics, etc.
-- Protocols support: grpc, quic, etc.
+- Protocols support: quic, etc.
 - Dynamic configuration via etcd/consul/etc

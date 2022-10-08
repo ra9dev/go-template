@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	adminAPI "github.com/ra9dev/go-template/internal/api/http/admin"
 	"net"
 	"net/http"
 	"time"
@@ -14,7 +15,6 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
-	adminAPI "github.com/ra9dev/go-template/internal/api/admin"
 	grpcAPI "github.com/ra9dev/go-template/internal/api/grpc"
 	"github.com/ra9dev/go-template/internal/config"
 	example "github.com/ra9dev/go-template/pb"
@@ -33,16 +33,6 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 	}
 
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		httpSrvRun := func(srv *http.Server) error {
-			zap.S().Infof("Listening HTTP on %s...", srv.Addr)
-
-			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-				return fmt.Errorf("HTTP server failed to serve: %w", err)
-			}
-
-			return nil
-		}
-
 		group, _ := errgroup.WithContext(cmd.Context())
 
 		group.Go(func() error {
@@ -77,7 +67,7 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 		})
 
 		if err := group.Wait(); err != nil {
-			return fmt.Errorf("one of the listeners failed to run: %w", err)
+			return fmt.Errorf("api group failed: %w", err)
 		}
 
 		return nil
@@ -113,12 +103,27 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 
 		shutdown.Add(func(ctx context.Context) {
 			zap.S().Infof("Shutting down HTTP on %s", addr)
-			_ = srv.Shutdown(ctx)
+
+			if err := srv.Shutdown(ctx); err != nil {
+				zap.S().Errorf("HTTP shutdown failed: %v", err)
+				return
+			}
+
 			zap.S().Info("HTTP shutdown succeeded!")
 		})
 
 		return &srv
 	}
+}
+
+func httpSrvRun(srv *http.Server) error {
+	zap.S().Infof("Listening HTTP on %s...", srv.Addr)
+
+	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("HTTP server failed to serve: %w", err)
+	}
+
+	return nil
 }
 
 func newGRPCServer(port uint) *grpc.Server {

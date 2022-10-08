@@ -2,15 +2,12 @@ package main
 
 import (
 	"context"
-	"os/signal"
-	"syscall"
-
-	"github.com/spf13/cobra"
-	"go.uber.org/zap"
-
+	"fmt"
 	"github.com/ra9dev/go-template/internal/config"
 	"github.com/ra9dev/go-template/pkg/log"
 	"github.com/ra9dev/go-template/pkg/shutdown"
+	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 )
 
 func main() {
@@ -21,32 +18,43 @@ func main() {
 
 	cfg, err := config.NewConfig()
 	if err != nil {
-		zap.S().Fatalf("failed to prepare config: %w", err)
+		zap.S().Panicf("failed to prepare config: %w", err)
 	}
 
-	_, err = log.NewLogger(cfg.LogLevel.ToZapAtomic())
-	if err != nil {
-		zap.S().Fatalf("failed to prepare logger: %w", err)
+	if err = setupLogger(cfg); err != nil {
+		zap.S().Panic(err)
 	}
-
-	shutdown.Add(func(_ context.Context) { _ = zap.L().Sync() })
 
 	rootCmd.AddCommand(
 		APIServerCMD(cfg),
 	)
 
-	osCTX, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
-	defer cancel()
-
 	defer func() {
-		zap.S().Infof("Shutdown timeout is %.1f seconds", shutdown.Timeout().Seconds())
-		shutdown.Wait()
-		zap.S().Info("Shutdown has been completed!")
+		if shutdownErr := shutdown.Wait(); shutdownErr != nil {
+			zap.S().Error(shutdownErr)
+
+			return
+		}
+
+		zap.S().Infof("Shutdown completed in %.1f seconds", shutdown.Timeout().Seconds())
 	}()
 
-	if err = rootCmd.ExecuteContext(osCTX); err != nil {
-		zap.S().Errorf("failed to execute root cmd: %w", err)
+	if err = rootCmd.ExecuteContext(shutdown.Context()); err != nil {
+		zap.S().Errorf("failed to execute root cmd: %v", err)
 
 		return
 	}
+}
+
+func setupLogger(cfg config.Config) error {
+	_, err := log.NewLogger(cfg.LogLevel.ToZapAtomic())
+	if err != nil {
+		return fmt.Errorf("failed to prepare logger: %w", err)
+	}
+
+	shutdown.Add(func(_ context.Context) {
+		_ = zap.L().Sync()
+	})
+
+	return nil
 }
