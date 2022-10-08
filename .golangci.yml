@@ -1,6 +1,8 @@
 run:
   skip-dirs:
     - vendor
+    - pb
+    - docs
   modules-download-mode: mod
 
 linters:
@@ -20,6 +22,7 @@ issues:
     - Line contains TODO/BUG/FIXME
 
 linters-settings:
+
   tagliatelle:
     # Check the struck tag name case.
     case:
@@ -60,3 +63,13 @@ linters-settings:
     ignore-decls:
       - w http.ResponseWriter
       - r *http.Request
+  ireturn:
+    allow:
+      - anon
+      - error
+      - empty
+      - stdlib
+      # You can specify idiomatic endings for interface
+      - (or|er)$
+      # Your custom interfaces go here:
+      - github.com/ra9dev/pkg/tracing

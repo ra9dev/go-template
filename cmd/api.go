@@ -33,16 +33,6 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 	}
 
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		httpSrvRun := func(srv *http.Server) error {
-			zap.S().Infof("Listening HTTP on %s...", srv.Addr)
-
-			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-				return fmt.Errorf("HTTP server failed to serve: %w", err)
-			}
-
-			return nil
-		}
-
 		group, _ := errgroup.WithContext(cmd.Context())
 
 		group.Go(func() error {
@@ -84,6 +74,16 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 	}
 
 	return cmd
+}
+
+func httpSrvRun(srv *http.Server) error {
+	zap.S().Infof("Listening HTTP on %s...", srv.Addr)
+
+	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("HTTP server failed to serve: %w", err)
+	}
+
+	return nil
 }
 
 func newHTTPClientHandler() *chi.Mux {

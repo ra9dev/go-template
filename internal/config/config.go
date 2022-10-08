@@ -13,12 +13,17 @@ const (
 	defaultHTTPPort      = 80
 	defaultGRPCPort      = 82
 	defaultHTTPAdminPort = 84
+
+	ServiceName    = "go-template"
+	ServiceVersion = "1.0.0"
 )
 
 type Config struct {
-	LogLevel  log.Level       `mapstructure:"log_level"`
-	Ports     PortsConfig     `mapstructure:"ports"`
-	DataStore DataStoreConfig `mapstructure:"data_store"`
+	LogLevel    log.Level       `mapstructure:"log_level"`
+	Ports       PortsConfig     `mapstructure:"ports"`
+	DataStore   DataStoreConfig `mapstructure:"data_store"`
+	Tracing     TracingConfig   `mapstructure:"tracing"`
+	Environment string          `mapstructure:"environment"`
 }
 
 type PortsConfig struct {
@@ -29,6 +34,11 @@ type PortsConfig struct {
 
 type DataStoreConfig struct {
 	URL string `mapstructure:"url"`
+}
+
+type TracingConfig struct {
+	Enabled  bool   `mapstructure:"enabled"`
+	Endpoint string `mapstructure:"endpoint"`
 }
 
 func NewConfig() (Config, error) {

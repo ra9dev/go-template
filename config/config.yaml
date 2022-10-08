@@ -1,3 +1,4 @@
+environment: local
 log_level: debug
 ports:
   http: 80
@@ -5,3 +6,6 @@ ports:
   admin_http: 84
 data_store:
   url: postgres://postgres@localhost:5432/go-template?sslmode=disable
+tracing:
+  enabled: true
+  endpoint: "http://localhost:14268/api/traces"
