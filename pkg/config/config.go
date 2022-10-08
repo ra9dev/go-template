@@ -7,39 +7,48 @@ import (
 )
 
 const (
-	DefaultConfigName      = "config"
-	DefaultConfigExtension = "yaml"
-	DefaultConfigPath      = "."
+	DefaultName      = "config"
+	DefaultExtension = "yaml"
+	DefaultPath      = "."
 )
 
-type Config struct {
-	driver *viper.Viper
-}
-
-func NewConfig(configName, configExtension string, configPaths []string, opts ...Option) (Config, error) {
-	if configName == "" {
-		configName = DefaultConfigName
+type (
+	Config struct {
+		driver *viper.Viper
 	}
 
-	if configExtension == "" {
-		configExtension = DefaultConfigExtension
+	Params struct {
+		Name      string
+		Extension string
+		Paths     []string
+		Options   []Option
+	}
+)
+
+func New(params Params) (Config, error) {
+	if params.Name == "" {
+		params.Name = DefaultName
 	}
 
-	if len(configPaths) == 0 {
-		configPaths = append(configPaths, DefaultConfigPath)
+	if params.Extension == "" {
+		params.Extension = DefaultExtension
 	}
 
-	driver := viper.NewWithOptions()
+	if len(params.Paths) == 0 {
+		params.Paths = append(params.Paths, DefaultPath)
+	}
+
+	driver := viper.New()
 	driver.AutomaticEnv()
 	driver.AllowEmptyEnv(true)
-	driver.SetConfigName(configName)      // name of config file (without extension)
-	driver.SetConfigType(configExtension) // REQUIRED if the config file does not have the extension in the name
+	driver.SetConfigName(params.Name)      // name of config file (without extension)
+	driver.SetConfigType(params.Extension) // REQUIRED if the config file does not have the extension in the name
 
-	for _, path := range configPaths {
+	for _, path := range params.Paths {
 		driver.AddConfigPath(path)
 	}
 
-	for _, opt := range opts {
+	for _, opt := range params.Options {
 		opt(driver)
 	}
 
@@ -53,6 +62,20 @@ func NewConfig(configName, configExtension string, configPaths []string, opts ..
 func (c Config) Unmarshal(value any, opts ...viper.DecoderConfigOption) error {
 	if err := c.driver.Unmarshal(value, opts...); err != nil {
 		return fmt.Errorf("failed to unmarshal config of type %T: %w", value, err)
+	}
+
+	return nil
+}
+
+func (c Config) GetSettings() map[string]any {
+	return c.driver.AllSettings()
+}
+
+func (c Config) MergeInConfig(other Config) error {
+	settings := other.GetSettings()
+
+	if err := c.driver.MergeConfigMap(settings); err != nil {
+		return fmt.Errorf("failed to merge config: %w", err)
 	}
 
 	return nil

@@ -2,20 +2,24 @@ package config
 
 import (
 	"fmt"
-
 	"github.com/ra9dev/go-template/pkg/config"
 	"github.com/ra9dev/go-template/pkg/log"
+	"strings"
 )
 
-const relativeConfigPath = "./config"
+const defaultConfigPath = "./config"
+
+var defaultEnvKeyReplacer = strings.NewReplacer(".", "_")
 
 const (
 	defaultHTTPPort      = 80
 	defaultGRPCPort      = 82
 	defaultHTTPAdminPort = 84
+	defaultEnv           = "local"
 )
 
 type Config struct {
+	Env       string          `mapstructure:"env"`
 	LogLevel  log.Level       `mapstructure:"log_level"`
 	Ports     PortsConfig     `mapstructure:"ports"`
 	DataStore DataStoreConfig `mapstructure:"data_store"`
@@ -32,28 +36,69 @@ type DataStoreConfig struct {
 }
 
 func NewConfig() (Config, error) {
-	paths := []string{relativeConfigPath}
+	paths := []string{defaultConfigPath}
 
 	defaultConfig := map[string]any{
+		"env":              defaultEnv,
 		"ports.http":       defaultHTTPPort,
 		"ports.grpc":       defaultGRPCPort,
 		"ports.admin_http": defaultHTTPAdminPort,
 	}
 
-	rawCfg, err := config.NewConfig(
-		config.DefaultConfigName,
-		config.DefaultConfigExtension,
-		paths,
-		config.WithDefault(defaultConfig),
+	defaultOpts := []config.Option{
+		config.WithEnvKeyReplacer(defaultEnvKeyReplacer),
+	}
+
+	rawCfg, err := config.New(
+		config.Params{
+			Paths:   paths,
+			Options: append([]config.Option{config.WithDefault(defaultConfig)}, defaultOpts...),
+		},
 	)
 	if err != nil {
 		return Config{}, fmt.Errorf("could not create config: %w", err)
 	}
 
-	cfg := Config{}
-	if err = rawCfg.Unmarshal(&cfg); err != nil {
+	baseConfig := Config{}
+	if err = rawCfg.Unmarshal(&baseConfig); err != nil {
 		return Config{}, fmt.Errorf("could not unmarshal config: %w", err)
 	}
 
-	return cfg, nil
+	if additionalConfigsParams := getAdditionalConfigs(baseConfig, paths); len(additionalConfigsParams) > 0 {
+		for i := range additionalConfigsParams {
+			additionalConfigsParams[i].Options = append(additionalConfigsParams[i].Options, defaultOpts...)
+		}
+
+		rawCfg, err = config.NewMerged(rawCfg, additionalConfigsParams...)
+		if err != nil {
+			return Config{}, fmt.Errorf("could not merge configs: %w", err)
+		}
+	}
+
+	if err = rawCfg.Unmarshal(&baseConfig); err != nil {
+		return Config{}, fmt.Errorf("could not unmarshal config: %w", err)
+	}
+
+	return baseConfig, nil
+}
+
+func getAdditionalConfigs(baseConfig Config, basePaths []string) []config.Params {
+	additionalConfigsParams := make([]config.Params, 0)
+
+	if baseConfig.Env != "" {
+		envPaths := make([]string, 0, len(basePaths))
+
+		for _, path := range basePaths {
+			envPaths = append(envPaths, fmt.Sprintf("%s/%s", path, baseConfig.Env))
+		}
+
+		additionalConfigsParams = append(
+			additionalConfigsParams,
+			config.Params{
+				Paths: envPaths,
+			},
+		)
+	}
+
+	return additionalConfigsParams
 }

@@ -102,7 +102,7 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 		}
 
 		shutdown.Add(func(ctx context.Context) {
-			zap.S().Infof("Shutting down HTTP on %s", addr)
+			zap.S().Infof("Shutting down HTTP on %s...", addr)
 
 			if err := srv.Shutdown(ctx); err != nil {
 				zap.S().Errorf("HTTP shutdown failed: %v", err)
@@ -133,7 +133,7 @@ func newGRPCServer(port uint) *grpc.Server {
 	example.RegisterGreeterServer(srv, exampleService)
 
 	shutdown.Add(func(ctx context.Context) {
-		zap.S().Infof("Shutting down GRPC on :%d", port)
+		zap.S().Infof("Shutting down GRPC on :%d...", port)
 		srv.GracefulStop()
 		zap.S().Info("GRPC shutdown succeeded!")
 	})

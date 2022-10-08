@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"fmt"
-
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
@@ -31,15 +30,7 @@ func main() {
 		APIServerCMD(cfg),
 	)
 
-	defer func() {
-		if shutdownErr := shutdown.Wait(); shutdownErr != nil {
-			zap.S().Error(shutdownErr)
-
-			return
-		}
-
-		zap.S().Infof("Shutdown completed in %.1f seconds", shutdown.Timeout().Seconds())
-	}()
+	defer gracefulShutdown()
 
 	if err = rootCmd.ExecuteContext(shutdown.Context()); err != nil {
 		zap.S().Errorf("failed to execute root cmd: %v", err)
@@ -55,9 +46,21 @@ func setupLogger(cfg config.Config) error {
 	}
 
 	shutdown.Add(func(_ context.Context) {
+		zap.S().Infof("Flushing log buffer...")
 		// ignoring err because there is no buffer for stderr
 		_ = zap.L().Sync()
+		zap.S().Infof("Log buffer flushed!")
 	})
 
 	return nil
+}
+
+func gracefulShutdown() {
+	if shutdownErr := shutdown.Wait(); shutdownErr != nil {
+		zap.S().Error(shutdownErr)
+
+		return
+	}
+
+	zap.S().Infof("Shutdown completed in %.1f seconds", shutdown.Timeout().Seconds())
 }
