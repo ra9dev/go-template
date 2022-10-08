@@ -6,8 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spf13/cobra"
 	"go.uber.org/zap"
+
+	"github.com/spf13/cobra"
 
 	"github.com/ra9dev/go-template/internal/config"
 	"github.com/ra9dev/go-template/pkg/log"
@@ -73,6 +74,8 @@ func newTraceProvider(cfg config.Config) error {
 		zap.S().Info("Shutting down tracing provider")
 		if err = provider.Shutdown(ctx); err != nil {
 			zap.S().Error(err)
+
+			return
 		}
 		zap.S().Info("Tracing provider shutdown succeeded!")
 	})
