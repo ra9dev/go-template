@@ -2,9 +2,10 @@ package config
 
 import (
 	"fmt"
+	"strings"
+
 	"github.com/ra9dev/go-template/pkg/config"
 	"github.com/ra9dev/go-template/pkg/log"
-	"strings"
 )
 
 const defaultConfigPath = "./config"
