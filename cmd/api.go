@@ -12,7 +12,7 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
-	chi "github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5"
 	"github.com/ra9dev/go-template/pkg/tracing"
 	"github.com/spf13/cobra"
 
@@ -35,16 +35,6 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 	}
 
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		httpSrvRun := func(srv *http.Server) error {
-			zap.S().Infof("Listening HTTP on %s...", srv.Addr)
-
-			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-				return fmt.Errorf("HTTP server failed to serve: %w", err)
-			}
-
-			return nil
-		}
-
 		group, _ := errgroup.WithContext(cmd.Context())
 
 		group.Go(func() error {
@@ -90,6 +80,16 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 	}
 
 	return cmd
+}
+
+func httpSrvRun(srv *http.Server) error {
+	zap.S().Infof("Listening HTTP on %s...", srv.Addr)
+
+	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+		return fmt.Errorf("HTTP server failed to serve: %w", err)
+	}
+
+	return nil
 }
 
 func newHTTPClientHandler() *chi.Mux {
@@ -150,9 +150,8 @@ func newTraceProvider(cfg config.Config) error {
 		Endpoint:       cfg.Tracing.Endpoint,
 		Enabled:        cfg.Tracing.Enabled,
 	})
-
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create trace provider: %w", err)
 	}
 
 	shutdown.Add(func(ctx context.Context) {

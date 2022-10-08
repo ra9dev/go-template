@@ -26,8 +26,8 @@ func (s ExampleService) SayHello(ctx context.Context, _ *emptypb.Empty) (*exampl
 	return &example.HelloReply{Message: "Hello, world!"}, nil
 }
 
-// ExampleInternalBusinessLogicCall is an example of passing ctx and span to internal business logic
+// ExampleInternalBusinessLogicCall is an example of passing ctx and span to internal business logic.
 func exampleInternalBusinessLogicCall(ctx context.Context) {
-	ctx, span := tracing.SpanFromContext(ctx, "grpc", "someService.Hi")
+	_, span := tracing.SpanFromContext(ctx, "grpc", "someService.Hi")
 	defer span.End()
 }

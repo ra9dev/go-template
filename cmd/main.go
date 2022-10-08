@@ -5,8 +5,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/spf13/cobra"
 	"go.uber.org/zap"
+
+	"github.com/spf13/cobra"
 
 	"github.com/ra9dev/go-template/internal/config"
 	"github.com/ra9dev/go-template/pkg/log"
@@ -21,12 +22,12 @@ func main() {
 
 	cfg, err := config.NewConfig()
 	if err != nil {
-		zap.S().Fatalf("failed to prepare config: %w", err)
+		zap.S().Fatalf("failed to prepare config: %s", err.Error())
 	}
 
 	_, err = log.NewLogger(cfg.LogLevel.ToZapAtomic())
 	if err != nil {
-		zap.S().Fatalf("failed to prepare logger: %w", err)
+		zap.S().Fatalf("failed to prepare logger: %s", err.Error())
 	}
 
 	shutdown.Add(func(_ context.Context) { _ = zap.L().Sync() })
@@ -45,7 +46,7 @@ func main() {
 	}()
 
 	if err = rootCmd.ExecuteContext(osCTX); err != nil {
-		zap.S().Errorf("failed to execute root cmd: %w", err)
+		zap.S().Errorf("failed to execute root cmd: %s", err.Error())
 
 		return
 	}

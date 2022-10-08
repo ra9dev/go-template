@@ -2,6 +2,7 @@ package tracing
 
 import (
 	"context"
+	"fmt"
 
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/exporters/jaeger"
@@ -33,12 +34,19 @@ func NewProvider(config Config) (*Provider, error) {
 			provider: trace.NewNoopTracerProvider(),
 		}, nil
 	}
-	exp, err := jaeger.New(jaeger.WithCollectorEndpoint(jaeger.WithEndpoint(config.Endpoint)))
+
+	endpoint := jaeger.WithEndpoint(config.Endpoint)
+
+	collection := jaeger.WithCollectorEndpoint(
+		endpoint,
+	)
+
+	exp, err := jaeger.New(collection)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create Jaeger exporter: %w", err)
 	}
 
-	r, err := resource.Merge(
+	res, err := resource.Merge(
 		resource.Default(),
 		resource.NewWithAttributes(
 			semconv.SchemaURL,
@@ -47,14 +55,13 @@ func NewProvider(config Config) (*Provider, error) {
 			semconv.DeploymentEnvironmentKey.String(config.Environment),
 		),
 	)
-
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to create resource: %w", err)
 	}
 
 	provider := sdktrace.NewTracerProvider(
 		sdktrace.WithBatcher(exp),
-		sdktrace.WithResource(r),
+		sdktrace.WithResource(res),
 	)
 
 	otel.SetTracerProvider(provider)
@@ -77,16 +84,11 @@ func (p Provider) Shutdown(ctx context.Context) {
 	}
 
 	if prv, ok := p.provider.(*sdktrace.TracerProvider); ok {
-		prv.Shutdown(ctx)
+		_ = prv.Shutdown(ctx)
 	}
 }
 
 // Tracer returns a tracer for the given name.
 func Tracer(name string) trace.Tracer {
 	return otel.GetTracerProvider().Tracer(name)
-}
-
-// Inject injects the trace headers into the given context.
-func Inject(ctx context.Context, carrier propagation.TextMapCarrier) {
-	otel.GetTextMapPropagator().Inject(ctx, carrier)
 }
