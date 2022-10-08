@@ -1,1 +1,0 @@
-This is example grpc client for go-template project. It uses grpc server from go-template project.
