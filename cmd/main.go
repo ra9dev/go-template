@@ -80,8 +80,10 @@ func setupLogger(cfg config.Config) error {
 
 	shutdown.Add(func(_ context.Context) {
 		zap.S().Infof("Flushing log buffer...")
+
 		// ignoring err because there is no buffer for stderr
 		_ = zap.L().Sync()
+
 		zap.S().Infof("Log buffer flushed!")
 	})
 
