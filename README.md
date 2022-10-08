@@ -19,3 +19,10 @@ Template for productive high-tech creators
 - SRE best practices support: tracing, metrics, etc.
 - Protocols support: grpc, quic, etc.
 - Dynamic configuration via etcd/consul/etc
+
+### Tracing
+[Jaeger](https://www.jaegertracing.io/) open source, end-to-end distributed<br/>
+[OpenTelemetry](https://opentelemetry.io/docs/migration/opentracing/)<br/>
+
+### Jaeger UI:
+http://localhost:16686/

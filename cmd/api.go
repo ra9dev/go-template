@@ -8,11 +8,13 @@ import (
 	"net/http"
 	"time"
 
-	chi "github.com/go-chi/chi/v5"
-	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
+
+	chi "github.com/go-chi/chi/v5"
+	"github.com/ra9dev/go-template/pkg/tracing"
+	"github.com/spf13/cobra"
 
 	adminAPI "github.com/ra9dev/go-template/internal/api/admin"
 	grpcAPI "github.com/ra9dev/go-template/internal/api/grpc"
@@ -76,6 +78,10 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 			return nil
 		})
 
+		group.Go(func() error {
+			return newTraceProvider(cfg)
+		})
+
 		if err := group.Wait(); err != nil {
 			return fmt.Errorf("one of the listeners failed to run: %w", err)
 		}
@@ -134,4 +140,26 @@ func newGRPCServer(port uint) *grpc.Server {
 	})
 
 	return srv
+}
+
+func newTraceProvider(cfg config.Config) error {
+	provider, err := tracing.NewProvider(tracing.Config{
+		ServiceName:    config.ServiceName,
+		ServiceVersion: config.ServiceVersion,
+		Environment:    cfg.Environment,
+		Endpoint:       cfg.Tracing.Endpoint,
+		Enabled:        cfg.Tracing.Enabled,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	shutdown.Add(func(ctx context.Context) {
+		zap.S().Info("Shutting down tracing provider")
+		provider.Shutdown(ctx)
+		zap.S().Info("Tracing provider shutdown succeeded!")
+	})
+
+	return nil
 }
