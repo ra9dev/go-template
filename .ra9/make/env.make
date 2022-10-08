@@ -51,7 +51,7 @@ environment:
 	$(MAKE) deps
 	docker-compose up --force-recreate --remove-orphans -d
 	sleep 5
-	$(MAKE) migrate
+	#$(MAKE) migrate TODO: uncomment when migrations are added
 
 swagger:
 	$(call describe_job,"Generating swagger docs")
