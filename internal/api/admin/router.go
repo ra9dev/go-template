@@ -1,7 +1,7 @@
 package admin
 
 import (
-	"github.com/go-chi/chi/v5"
+	chi "github.com/go-chi/chi/v5"
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	_ "github.com/ra9dev/go-template/docs" // swagger docs

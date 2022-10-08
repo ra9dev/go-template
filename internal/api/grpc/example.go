@@ -18,7 +18,7 @@ func NewExampleService() ExampleService {
 }
 
 func (s ExampleService) SayHello(ctx context.Context, _ *emptypb.Empty) (*example.HelloReply, error) {
-	ctx, span := tracing.StartGRPCTrace(ctx, "exampleService.SayHello")
+	ctx, span := tracing.SpanFromContext(ctx, "grpc", "exampleService.SayHello")
 	defer span.End()
 
 	exampleInternalBusinessLogicCall(ctx)
@@ -28,6 +28,6 @@ func (s ExampleService) SayHello(ctx context.Context, _ *emptypb.Empty) (*exampl
 
 // ExampleInternalBusinessLogicCall is an example of passing ctx and span to internal business logic.
 func exampleInternalBusinessLogicCall(ctx context.Context) {
-	_, span := tracing.SpanFromContext(ctx, "grpc", "someService.Hi")
+	_, span := tracing.SpanFromContext(ctx, "service", "someService.Hi")
 	defer span.End()
 }

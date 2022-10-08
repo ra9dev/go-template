@@ -1,6 +1,8 @@
 run:
   skip-dirs:
     - vendor
+    - pb
+    - docs
   modules-download-mode: mod
 
 linters:
@@ -20,6 +22,7 @@ issues:
     - Line contains TODO/BUG/FIXME
 
 linters-settings:
+
   tagliatelle:
     # Check the struck tag name case.
     case:

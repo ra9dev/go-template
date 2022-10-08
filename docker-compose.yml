@@ -11,7 +11,6 @@ services:
       - POSTGRES_DB=go-template
     networks: ["go-template"]
   jaeger:
-    container_name: jaeger_container
     restart: always
     image: jaegertracing/all-in-one:1.21
     environment:
