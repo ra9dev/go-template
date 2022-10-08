@@ -40,6 +40,6 @@ View your traces at [Jaeger UI](http://localhost:16686/) 🔎
   - GRPC
     - automated proto dependencies fetch
     - swagger-like proto contracts availability
-    - multi-transport handlers
   - QUIC
+  - multi-transport handlers
 - Dynamic configuration via etcd/consul/etc
