@@ -1,5 +1,4 @@
-environment: local
-log_level: debug
+env: local
 ports:
   http: 80
   grpc: 82

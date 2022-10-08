@@ -14,8 +14,8 @@ import (
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
-	adminAPI "github.com/ra9dev/go-template/internal/api/admin"
 	grpcAPI "github.com/ra9dev/go-template/internal/api/grpc"
+	adminAPI "github.com/ra9dev/go-template/internal/api/http/admin"
 	"github.com/ra9dev/go-template/internal/config"
 	example "github.com/ra9dev/go-template/pb"
 	"github.com/ra9dev/go-template/pkg/shutdown"
@@ -67,7 +67,7 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 		})
 
 		if err := group.Wait(); err != nil {
-			return fmt.Errorf("one of the listeners failed to run: %w", err)
+			return fmt.Errorf("api group failed: %w", err)
 		}
 
 		return nil
@@ -112,8 +112,13 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 		}
 
 		shutdown.Add(func(ctx context.Context) {
-			zap.S().Infof("Shutting down HTTP on %s", addr)
-			_ = srv.Shutdown(ctx)
+			zap.S().Infof("Shutting down HTTP on %s...", addr)
+
+			if err := srv.Shutdown(ctx); err != nil {
+				zap.S().Errorf("HTTP shutdown failed: %v", err)
+				return
+			}
+
 			zap.S().Info("HTTP shutdown succeeded!")
 		})
 
@@ -128,7 +133,7 @@ func newGRPCServer(port uint) *grpc.Server {
 	example.RegisterGreeterServer(srv, exampleService)
 
 	shutdown.Add(func(ctx context.Context) {
-		zap.S().Infof("Shutting down GRPC on :%d", port)
+		zap.S().Infof("Shutting down GRPC on :%d...", port)
 		srv.GracefulStop()
 		zap.S().Info("GRPC shutdown succeeded!")
 	})

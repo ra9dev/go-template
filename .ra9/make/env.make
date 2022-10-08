@@ -51,26 +51,14 @@ environment:
 	$(MAKE) deps
 	docker-compose up --force-recreate --remove-orphans -d
 	sleep 5
-	$(MAKE) migrate
+	#$(MAKE) migrate TODO: uncomment when migrations are added
 
 swagger:
 	$(call describe_job,"Generating swagger docs")
 	$(MAKE) swagger-deps
-	$(LOCAL_BIN)/swag init -g internal/api/admin/doc.go -p snakecase -o docs --parseInternal
+	$(LOCAL_BIN)/swag init -g internal/api/http/doc.go -p snakecase -o docs --parseInternal
 
-PROTOC := $(shell command -v protoc 2> /dev/null)
-PROTO_PATH ?= ./pb/*.proto
-grpc:
-ifndef PROTOC
-	$(error "protoc is not installed. Visit https://grpc.io/docs/protoc-installation")
-endif
-	$(call describe_job,"Generating grpc code")
-	protoc \
-    	--plugin=protoc-gen-go=$(LOCAL_BIN)/protoc-gen-go --go_out=. --go_opt=paths=source_relative --go_opt=M$(PROTO_PATH)=./pb \
-    	--plugin=protoc-gen-go-grpc=$(LOCAL_BIN)/protoc-gen-go-grpc --go-grpc_out=. --go-grpc_opt=paths=source_relative --go-grpc_opt=M$(PROTO_PATH)=./pb \
-    	-I /usr/local/include:$(THIRD_PARTY_PROTO_PATH):. \
-    	$(PROTO_PATH)
-
-run-api:
-	$(call describe_job,"Starting API server")
-	go run cmd/*.go api
+RUN_CMD ?= api
+run:
+	$(call describe_job,"Running command $(RUN_CMD)")
+	go run cmd/*.go $(RUN_CMD)

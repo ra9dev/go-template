@@ -2,27 +2,39 @@
 
 Template for productive high-tech creators
 
-### Features
+## Features
 
-- Multi-command support with https://github.com/spf13/cobra 🤾🏼‍♀️ 🤾🏼 🤾🏼‍♂️
-- Shared git hooks: fast linter + goimports on `commit`, full linter + tests + dependencies update on `push`. Run `make environment` for setup 🪝
-- Lightweight logger that can be used both locally and globaly with https://github.com/uber-go/zap ✉️
-- Extensive application configuration through file (yaml by default), env, flags with https://github.com/spf13/viper 💽
-- Friendly `graceful shutdown` that can be used in any part of your code 🤳 
-- Database support both for local development and migrations (postgres by default), can be changed easily at `db.make` and `docker-compose.yml`. Migrations engine - https://github.com/golang-migrate/migrate 💾
-- Smart goimports linting that keeps your imports within 3 blocks via https://github.com/incu6us/goimports-reviser 🗄
-- Multi-port api server for: `http, admin_http, grpc` 🎏 Note: `grpc` is still in progress
-- Swagger spec generation with https://github.com/swaggo/swag (Admin HTTP) 😎
+### Development
+
+- Shared git hooks: on [commit](./scripts/pre-commit.sh) and on [push](./scripts/pre-push.sh) 🪝
+- Friendly [graceful shutdown](./pkg/shutdown/global.go) that can be used in any part of your code 🤳
+- [Smart fixer](https://github.com/incu6us/goimports-reviser) for your imports keeping them within 3 blocks 🗄
+
+### Delivery
+
+- [Multi-command](https://github.com/spf13/cobra) support 🤾🏼‍♀️ 🤾🏼 🤾🏼‍♂️
+- Extensive multi-env [configuration](https://github.com/spf13/viper) via [config.yaml](./config/config.yaml), environment variables, flags 💽
+- Multi-port api server for: `http, admin_http, grpc` 🎏
+- Swagger spec [generation](https://github.com/swaggo/swag) (available at [Admin HTTP](./internal/api/http/admin/router.go)) 😎
 - Minimal Docker image ~ 25MB 🐳
 
-### To Be Done
-- SRE best practices support: tracing, metrics, etc.
-- Protocols support: grpc, quic, etc.
+### Database
+
+- [Database](./docker-compose.yml) for local development ([postgres](./.ra9/make/db.make) by default) 💾
+- [Migrations engine](https://github.com/golang-migrate/migrate) with predefined [make scripts](./.ra9/make/db.make) 🎼
+
+### Site Reliability Engineering
+
+- [Lightweight logger](https://github.com/uber-go/zap) ✉️
+- Tracing via [Jaeger](https://www.jaegertracing.io/) and [OpenTelemetry](https://opentelemetry.io).
+View your traces at [Jaeger UI](http://localhost:16686/) 🔎
+
+## To Be Done
+- SRE best practices support: traced logger, traced transport, metrics, etc.
+- Protocols support:
+  - GRPC
+    - automated proto dependencies fetch
+    - swagger-like proto contracts availability
+    - multi-transport handlers
+  - QUIC
 - Dynamic configuration via etcd/consul/etc
-
-### Tracing
-[Jaeger](https://www.jaegertracing.io/) open source, end-to-end distributed<br/>
-[OpenTelemetry](https://opentelemetry.io/docs/migration/opentracing/)<br/>
-
-### Jaeger UI:
-http://localhost:16686/
