@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	adminAPI "github.com/ra9dev/go-template/internal/api/http/admin"
 	"net"
 	"net/http"
 	"time"
@@ -16,6 +15,7 @@ import (
 	"google.golang.org/grpc"
 
 	grpcAPI "github.com/ra9dev/go-template/internal/api/grpc"
+	adminAPI "github.com/ra9dev/go-template/internal/api/http/admin"
 	"github.com/ra9dev/go-template/internal/config"
 	example "github.com/ra9dev/go-template/pb"
 	"github.com/ra9dev/go-template/pkg/shutdown"

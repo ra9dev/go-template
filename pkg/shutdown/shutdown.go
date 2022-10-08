@@ -3,11 +3,12 @@ package shutdown
 import (
 	"context"
 	"fmt"
-	"go.uber.org/zap"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
+
+	"go.uber.org/zap"
 )
 
 var signals = []os.Signal{syscall.SIGINT, syscall.SIGTERM}
