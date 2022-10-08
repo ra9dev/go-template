@@ -29,7 +29,7 @@ type Config struct {
 	LogLevel  log.Level       `mapstructure:"log_level"`
 	Ports     PortsConfig     `mapstructure:"ports"`
 	DataStore DataStoreConfig `mapstructure:"data_store"`
-	Tracing     TracingConfig   `mapstructure:"tracing"`
+	Tracing   TracingConfig   `mapstructure:"tracing"`
 }
 
 type PortsConfig struct {

@@ -4,9 +4,8 @@ import (
 	"context"
 	"fmt"
 
-	"go.uber.org/zap"
-
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
 
 	"github.com/ra9dev/go-template/internal/config"
 	"github.com/ra9dev/go-template/pkg/log"

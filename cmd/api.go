@@ -126,16 +126,6 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 	}
 }
 
-func httpSrvRun(srv *http.Server) error {
-	zap.S().Infof("Listening HTTP on %s...", srv.Addr)
-
-	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-		return fmt.Errorf("HTTP server failed to serve: %w", err)
-	}
-
-	return nil
-}
-
 func newGRPCServer(port uint) *grpc.Server {
 	srv := grpc.NewServer()
 	exampleService := grpcAPI.NewExampleService()
