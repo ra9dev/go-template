@@ -71,7 +71,9 @@ func newTraceProvider(cfg config.Config) error {
 
 	shutdown.Add(func(ctx context.Context) {
 		zap.S().Info("Shutting down tracing provider")
-		provider.Shutdown(ctx)
+		if err = provider.Shutdown(ctx); err != nil {
+			zap.S().Error(err)
+		}
 		zap.S().Info("Tracing provider shutdown succeeded!")
 	})
 

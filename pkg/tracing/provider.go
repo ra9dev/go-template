@@ -11,7 +11,6 @@ import (
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.12.0"
 	"go.opentelemetry.io/otel/trace"
-	"go.uber.org/zap"
 )
 
 type Config struct {
@@ -83,16 +82,16 @@ type shutdownable interface {
 }
 
 // Shutdown shuts down the tracing provider.
-func (p Provider) Shutdown(ctx context.Context) {
+func (p Provider) Shutdown(ctx context.Context) error {
 	if p.provider == nil {
-		return
+		return nil
 	}
 
 	if prv, ok := p.provider.(shutdownable); ok {
-		if err := prv.Shutdown(ctx); err != nil {
-			zap.S().Errorf("Failed to shutdown tracing provider: %s", err)
-		}
+		return fmt.Errorf("failed to shutdown tracing provider: %w", prv.Shutdown(ctx))
 	}
+
+	return nil
 }
 
 // Tracer returns a tracer for the given name.

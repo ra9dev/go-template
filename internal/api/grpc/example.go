@@ -19,7 +19,7 @@ func NewExampleService() ExampleService {
 }
 
 func (s ExampleService) SayHello(ctx context.Context, _ *emptypb.Empty) (*example.HelloReply, error) {
-	ctx, span := tracing.StartCustomSpan(ctx, trace.SpanKindInternal, "grpc", "exampleService.SayHello")
+	ctx, span := tracing.StarSpan(ctx, "grpc", "exampleService.SayHello")
 	defer span.End()
 
 	exampleInternalBusinessLogicCall(ctx)
