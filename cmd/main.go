@@ -21,11 +21,11 @@ func main() {
 
 	cfg, err := config.NewConfig()
 	if err != nil {
-		zap.S().Panicf("failed to prepare config: %v", err)
+		zap.S().Fatalf("failed to prepare config: %v", err)
 	}
 
 	if err = setupLogger(cfg); err != nil {
-		zap.S().Panic(err)
+		zap.S().Fatal(err)
 	}
 
 	if err = setupTracing(cfg); err != nil {
