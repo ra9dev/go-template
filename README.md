@@ -4,8 +4,8 @@ Template for productive high-tech creators
 
 ## Setup
 
-- Run `make environment`
 - Replace all occuriences of `go-template` to `your-service`
+- Run `make environment`
 
 ## Features
 
