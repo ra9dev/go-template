@@ -5,3 +5,6 @@ ports:
   admin_http: 84
 data_store:
   url: postgres://postgres@localhost:5432/go-template?sslmode=disable
+tracing:
+  enabled: true
+  endpoint: "http://localhost:14268/api/traces"

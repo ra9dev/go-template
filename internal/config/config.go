@@ -19,11 +19,17 @@ const (
 	defaultEnv           = "local"
 )
 
+const (
+	ServiceName    = "go-template"
+	ServiceVersion = "1.0.0"
+)
+
 type Config struct {
 	Env       string          `mapstructure:"env"`
 	LogLevel  log.Level       `mapstructure:"log_level"`
 	Ports     PortsConfig     `mapstructure:"ports"`
 	DataStore DataStoreConfig `mapstructure:"data_store"`
+	Tracing     TracingConfig   `mapstructure:"tracing"`
 }
 
 type PortsConfig struct {
@@ -34,6 +40,11 @@ type PortsConfig struct {
 
 type DataStoreConfig struct {
 	URL string `mapstructure:"url"`
+}
+
+type TracingConfig struct {
+	Enabled  bool   `mapstructure:"enabled"`
+	Endpoint string `mapstructure:"endpoint"`
 }
 
 func NewConfig() (Config, error) {
