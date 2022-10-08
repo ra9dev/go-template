@@ -29,7 +29,7 @@ func main() {
 	}
 
 	if err = setupTracing(cfg); err != nil {
-		zap.S().Fatalf("failed to prepare trace provider: %v", err)
+		zap.S().Fatal(err)
 	}
 
 	rootCmd.AddCommand(
@@ -54,7 +54,7 @@ func setupTracing(cfg config.Config) error {
 		Enabled:        cfg.Tracing.Enabled,
 	})
 	if err != nil {
-		return fmt.Errorf("failed to create trace provider: %w", err)
+		return fmt.Errorf("failed to prepare tracing provider: %w", err)
 	}
 
 	shutdown.Add(func(ctx context.Context) {
