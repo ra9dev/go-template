@@ -50,7 +50,7 @@ environment:
 	$(MAKE) git-hooks
 	$(MAKE) deps
 	docker-compose up --force-recreate --remove-orphans -d
-	sleep 5
+	#sleep 5 TODO: uncomment when migrations are added
 	#$(MAKE) migrate TODO: uncomment when migrations are added
 
 swagger:
