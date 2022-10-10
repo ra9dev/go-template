@@ -11,6 +11,10 @@ var (
 	timeout = time.Second * 5
 )
 
+func RegisterTimeout(duration time.Duration) {
+	timeout = duration
+}
+
 func Timeout() time.Duration {
 	return timeout
 }
