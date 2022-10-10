@@ -2,13 +2,11 @@ package shutdown
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"os/signal"
 	"sync"
 	"syscall"
-
-	"go.uber.org/zap"
+	"time"
 )
 
 var signals = []os.Signal{syscall.SIGINT, syscall.SIGTERM}
@@ -46,8 +44,6 @@ func NewGracefulShutdown() *GracefulShutdown {
 }
 
 func (s *GracefulShutdown) Add(fn CallbackFunc) {
-	zap.S().Debugf("added shutdown callback")
-
 	s.mu.Lock()
 	s.callbacks = append(s.callbacks, fn)
 	s.mu.Unlock()
@@ -90,7 +86,9 @@ func (s *GracefulShutdown) Wait() error {
 	select {
 	case <-s.done:
 		return nil
+	case <-time.After(Timeout()):
+		return ErrTimeout
 	case <-stop:
-		return fmt.Errorf("shutdown force stopped")
+		return ErrForceStop
 	}
 }
