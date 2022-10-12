@@ -87,8 +87,13 @@ func (p Provider) Shutdown(ctx context.Context) error {
 		return nil
 	}
 
-	if prv, ok := p.provider.(shutdownable); ok {
-		return fmt.Errorf("failed to shutdown tracing provider: %w", prv.Shutdown(ctx))
+	prv, ok := p.provider.(shutdownable)
+	if !ok {
+		return nil
+	}
+
+	if err := prv.Shutdown(ctx); err != nil {
+		return fmt.Errorf("failed to shutdown tracing provider: %w", err)
 	}
 
 	return nil
