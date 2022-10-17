@@ -3,12 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/ra9dev/go-template/pkg/sre/log"
-	"github.com/ra9dev/go-template/pkg/sre/tracing"
 
-	"github.com/ra9dev/go-template/internal/config"
 	"github.com/ra9dev/shutdown"
 	"github.com/spf13/cobra"
+
+	"github.com/ra9dev/go-template/internal/config"
+	"github.com/ra9dev/go-template/pkg/sre/log"
+	"github.com/ra9dev/go-template/pkg/sre/tracing"
 )
 
 func main() {

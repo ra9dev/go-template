@@ -2,12 +2,12 @@ package grpc
 
 import (
 	"context"
-	"github.com/ra9dev/go-template/pkg/sre/tracing"
 
 	"go.opentelemetry.io/otel/trace"
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	example "github.com/ra9dev/go-template/pb"
+	"github.com/ra9dev/go-template/pkg/sre/tracing"
 )
 
 type ExampleService struct {

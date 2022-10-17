@@ -3,10 +3,11 @@ package log
 import (
 	"context"
 	"fmt"
-	"github.com/ra9dev/go-template/pkg/sre"
-	"go.opentelemetry.io/otel/trace"
 
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
+
+	"github.com/ra9dev/go-template/pkg/sre"
 )
 
 var _ ContextWriter[Logger] = (*Logger)(nil)

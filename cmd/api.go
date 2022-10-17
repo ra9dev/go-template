@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ra9dev/go-template/pkg/sre/log"
 	"net"
 	"net/http"
 	"time"
@@ -19,6 +18,7 @@ import (
 	adminAPI "github.com/ra9dev/go-template/internal/api/http/admin"
 	"github.com/ra9dev/go-template/internal/config"
 	example "github.com/ra9dev/go-template/pb"
+	"github.com/ra9dev/go-template/pkg/sre/log"
 )
 
 const (
