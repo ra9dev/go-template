@@ -12,7 +12,9 @@ linters:
     - gochecknoglobals
     - gci
     - exhaustivestruct
+    - exhaustive
     - exhaustruct
+    - godot
 
 issues:
   # Restricts maximum count of issues to display with the same text, and show all instead.

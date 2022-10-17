@@ -14,7 +14,7 @@ type Handler interface {
 }
 
 // DecorateHandler with tracing for any MiddlewareUser
-func DecorateHandler[HandlerType Handler](handler HandlerType, params Params) HandlerType {
+func DecorateHandler[HandlerType Handler](handler HandlerType, params Params) HandlerType { // nolint:ireturn
 	opts := buildOpts(handler, params)
 
 	// TODO put request info middleware here as well

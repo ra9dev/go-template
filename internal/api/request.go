@@ -17,5 +17,5 @@ type (
 func IsSafeRequest(req SafeRequest) error {
 	req.Sanitize()
 
-	return req.Validate()
+	return req.Validate() // nolint:wrapcheck
 }

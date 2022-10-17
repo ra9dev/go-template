@@ -13,8 +13,6 @@ import (
 )
 
 func main() {
-	defer gracefulShutdown()
-
 	ctx := shutdown.Context()
 	rootCmd := &cobra.Command{
 		Use:   "go-template",
@@ -33,6 +31,8 @@ func main() {
 	if err = setupTracing(cfg); err != nil {
 		log.Fatal(ctx, err)
 	}
+
+	defer gracefulShutdown()
 
 	rootCmd.AddCommand(
 		APIServerCMD(cfg),

@@ -18,6 +18,7 @@ func Handler[Response any](
 		)
 
 		resp, err := handleFunc(w, r)
+
 		switch {
 		case err == nil:
 			render.JSON(w, r, resp)

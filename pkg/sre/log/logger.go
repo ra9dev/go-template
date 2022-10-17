@@ -41,7 +41,7 @@ func NewLogger(params Params) (Logger, error) {
 }
 
 func (l Logger) Sync() error {
-	return l.driver.Sync()
+	return l.driver.Sync() // nolint:wrapcheck
 }
 
 func (l Logger) NoContext() Writer[noContextLogger] {
