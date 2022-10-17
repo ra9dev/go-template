@@ -3,17 +3,18 @@ package main
 import (
 	"context"
 	"fmt"
-
-	"github.com/ra9dev/shutdown"
-	"github.com/spf13/cobra"
-	"go.uber.org/zap"
+	"github.com/ra9dev/go-template/pkg/sre/log"
+	"github.com/ra9dev/go-template/pkg/sre/tracing"
 
 	"github.com/ra9dev/go-template/internal/config"
-	"github.com/ra9dev/go-template/pkg/log"
-	"github.com/ra9dev/go-template/pkg/tracing"
+	"github.com/ra9dev/shutdown"
+	"github.com/spf13/cobra"
 )
 
 func main() {
+	defer gracefulShutdown()
+
+	ctx := shutdown.Context()
 	rootCmd := &cobra.Command{
 		Use:   "go-template",
 		Short: "Main entry-point command for the application",
@@ -21,25 +22,23 @@ func main() {
 
 	cfg, err := config.NewConfig()
 	if err != nil {
-		zap.S().Fatalf("failed to prepare config: %v", err)
+		log.Fatalf(ctx, "failed to prepare config: %v", err)
 	}
 
 	if err = setupLogger(cfg); err != nil {
-		zap.S().Fatal(err)
+		log.Fatal(ctx, err)
 	}
 
 	if err = setupTracing(cfg); err != nil {
-		zap.S().Fatal(err)
+		log.Fatal(ctx, err)
 	}
 
 	rootCmd.AddCommand(
 		APIServerCMD(cfg),
 	)
 
-	defer gracefulShutdown()
-
 	if err = rootCmd.ExecuteContext(shutdown.Context()); err != nil {
-		zap.S().Errorf("failed to execute root cmd: %v", err)
+		log.Errorf(ctx, "failed to execute root cmd: %v", err)
 
 		return
 	}
@@ -49,7 +48,7 @@ func setupTracing(cfg config.Config) error {
 	provider, err := tracing.NewProvider(tracing.Config{
 		ServiceName:    config.ServiceName,
 		ServiceVersion: config.ServiceVersion,
-		Environment:    cfg.Env,
+		Environment:    cfg.Env.String(),
 		Endpoint:       cfg.Tracing.Endpoint,
 		Enabled:        cfg.Tracing.Enabled,
 	})
@@ -58,33 +57,37 @@ func setupTracing(cfg config.Config) error {
 	}
 
 	shutdown.MustAdd("tracing", func(ctx context.Context) {
-		zap.S().Info("Shutting down tracing provider")
+		log.NoContext().Info("Shutting down tracing provider")
 
 		if err = provider.Shutdown(ctx); err != nil {
-			zap.S().Error(err)
+			log.NoContext().Error(err)
 
 			return
 		}
 
-		zap.S().Info("Tracing provider shutdown succeeded!")
+		log.NoContext().Info("Tracing provider shutdown succeeded!")
 	})
 
 	return nil
 }
 
 func setupLogger(cfg config.Config) error {
-	_, err := log.NewLogger(cfg.LogLevel.ToZapAtomic())
+	loggerParams := log.NewParams(cfg.Env, cfg.LogLevel)
+
+	logger, err := log.NewLogger(loggerParams)
 	if err != nil {
 		return fmt.Errorf("failed to prepare logger: %w", err)
 	}
 
+	log.RegisterLogger(logger)
+
 	shutdown.MustAdd("logger", func(_ context.Context) {
-		zap.S().Infof("Flushing log buffer...")
+		log.NoContext().Infof("Flushing log buffer...")
 
 		// ignoring err because there is no buffer for stderr
-		_ = zap.L().Sync()
+		_ = log.Sync()
 
-		zap.S().Infof("Log buffer flushed!")
+		log.NoContext().Infof("Log buffer flushed!")
 	})
 
 	return nil
@@ -92,10 +95,10 @@ func setupLogger(cfg config.Config) error {
 
 func gracefulShutdown() {
 	if shutdownErr := shutdown.Wait(); shutdownErr != nil {
-		zap.S().Error(shutdownErr)
+		log.NoContext().Error(shutdownErr)
 
 		return
 	}
 
-	zap.S().Infof("Shutdown completed in %.1f seconds", shutdown.Timeout().Seconds())
+	log.NoContext().Infof("Shutdown completed in %.1f seconds", shutdown.Timeout().Seconds())
 }

@@ -2,10 +2,11 @@ package config
 
 import (
 	"fmt"
+	"github.com/ra9dev/go-template/pkg/sre"
+	"github.com/ra9dev/go-template/pkg/sre/log"
 	"strings"
 
 	"github.com/ra9dev/go-template/pkg/config"
-	"github.com/ra9dev/go-template/pkg/log"
 )
 
 const defaultConfigPath = "./config"
@@ -25,7 +26,7 @@ const (
 )
 
 type Config struct {
-	Env       string          `mapstructure:"env"`
+	Env       sre.Env         `mapstructure:"env"`
 	LogLevel  log.Level       `mapstructure:"log_level"`
 	Ports     PortsConfig     `mapstructure:"ports"`
 	DataStore DataStoreConfig `mapstructure:"data_store"`

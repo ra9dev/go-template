@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/ra9dev/go-template/pkg/sre/log"
 	"net"
 	"net/http"
 	"time"
@@ -11,7 +12,6 @@ import (
 	chi "github.com/go-chi/chi/v5"
 	"github.com/ra9dev/shutdown"
 	"github.com/spf13/cobra"
-	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
 
@@ -33,37 +33,25 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 	}
 
 	cmd.RunE = func(cmd *cobra.Command, args []string) error {
-		group, _ := errgroup.WithContext(cmd.Context())
+		ctx := cmd.Context()
+		group, groupCTX := errgroup.WithContext(ctx)
 
 		group.Go(func() error {
 			clientHTTPHandler := newHTTPClientHandler()
 			clientHTTP := newHTTPServer(cfg.Ports.HTTP)(clientHTTPHandler)
 
-			return httpSrvRun(clientHTTP)
+			return httpSrvRun(groupCTX, clientHTTP)
 		})
 
 		group.Go(func() error {
 			adminHTTPHandler := newHTTPAdminHandler()
 			adminHTTP := newHTTPServer(cfg.Ports.AdminHTTP)(adminHTTPHandler)
 
-			return httpSrvRun(adminHTTP)
+			return httpSrvRun(groupCTX, adminHTTP)
 		})
 
 		group.Go(func() error {
-			grpcListener, err := net.Listen("tcp", fmt.Sprintf(":%d", cfg.Ports.GRPC))
-			if err != nil {
-				return fmt.Errorf("failed to listen port %d for grpc: %w", cfg.Ports.GRPC, err)
-			}
-
-			zap.S().Infof("Listening GRPC on :%d...", cfg.Ports.GRPC)
-
-			grpcServer := newGRPCServer(cfg.Ports.GRPC)
-
-			if err = grpcServer.Serve(grpcListener); err != nil {
-				return fmt.Errorf("GRPC server failed to serve: %w", err)
-			}
-
-			return nil
+			return grpcSrvRun(groupCTX, cfg.Ports.GRPC)
 		})
 
 		if err := group.Wait(); err != nil {
@@ -76,8 +64,8 @@ func APIServerCMD(cfg config.Config) *cobra.Command {
 	return cmd
 }
 
-func httpSrvRun(srv *http.Server) error {
-	zap.S().Infof("Listening HTTP on %s...", srv.Addr)
+func httpSrvRun(ctx context.Context, srv *http.Server) error {
+	log.Infof(ctx, "Listening HTTP on %s...", srv.Addr)
 
 	if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 		return fmt.Errorf("HTTP server failed to serve: %w", err)
@@ -114,18 +102,36 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 		shutdownKey := fmt.Sprintf("http:%d", port)
 
 		shutdown.MustAdd(shutdownKey, func(ctx context.Context) {
-			zap.S().Infof("Shutting down HTTP on %s...", addr)
+			log.NoContext().Infof("Shutting down HTTP on %s...", addr)
 
 			if err := srv.Shutdown(ctx); err != nil {
-				zap.S().Errorf("HTTP shutdown failed: %v", err)
+				log.NoContext().Errorf("HTTP shutdown failed: %v", err)
+
 				return
 			}
 
-			zap.S().Info("HTTP shutdown succeeded!")
+			log.NoContext().Info("HTTP shutdown succeeded!")
 		})
 
 		return &srv
 	}
+}
+
+func grpcSrvRun(ctx context.Context, port uint) error {
+	grpcListener, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
+	if err != nil {
+		return fmt.Errorf("failed to listen port %d for grpc: %w", port, err)
+	}
+
+	log.Infof(ctx, "Listening GRPC on :%d...", port)
+
+	grpcServer := newGRPCServer(port)
+
+	if err := grpcServer.Serve(grpcListener); err != nil {
+		return fmt.Errorf("GRPC server failed to serve: %w", err)
+	}
+
+	return nil
 }
 
 func newGRPCServer(port uint) *grpc.Server {
@@ -137,9 +143,11 @@ func newGRPCServer(port uint) *grpc.Server {
 	shutdownKey := fmt.Sprintf("grpc:%d", port)
 
 	shutdown.MustAdd(shutdownKey, func(ctx context.Context) {
-		zap.S().Infof("Shutting down GRPC on :%d...", port)
+		log.NoContext().Infof("Shutting down GRPC on :%d...", port)
+
 		srv.GracefulStop()
-		zap.S().Info("GRPC shutdown succeeded!")
+
+		log.NoContext().Info("GRPC shutdown succeeded!")
 	})
 
 	return srv
