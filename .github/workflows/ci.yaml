@@ -5,7 +5,7 @@ on:
       - "**.md"
       - LICENCE
     branches:
-      - master
+      - main
   pull_request:
 env:
   DEFAULT_GO_VERSION: 1.19
