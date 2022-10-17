@@ -34,12 +34,13 @@ Template for productive high-tech creators
 
 ### Site Reliability Engineering
 
-- [Lightweight logger](https://github.com/uber-go/zap) ✉️
+- [Traced logger](./pkg/sre/log) ✉️
+- [Traced transport](./pkg/sre/tracing/transport) 🛞
 - Tracing via [Jaeger](https://www.jaegertracing.io/) and [OpenTelemetry](https://opentelemetry.io).
 View your traces at [Jaeger UI](http://localhost:16686/) 🔎
 
 ## To Be Done
-- SRE best practices support: traced transport, metrics, etc.
+- SRE best practices support: profiling, metrics, etc.
 - Protocols support:
   - GRPC
     - automated proto dependencies fetch
