@@ -1,6 +1,6 @@
 # go-template
 
-[![ci](https://github.com/ra9dev/go-template/actions/workflows/ci.yaml/badge.svg)](https://github.com/ra9dev/go-template/actions/workflows/ci.yaml)
+[![ci](https://github.com/ra9dev/go-template/actions/workflows/cicd.yaml/badge.svg)](https://github.com/ra9dev/go-template/actions/workflows/ci.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ra9dev/go-template)](https://goreportcard.com/report/github.com/ra9dev/go-template)
 [![Documentation](https://godoc.org/github.com/ra9dev/go-template?status.svg)](https://pkg.go.dev/mod/github.com/ra9dev/go-template)
 
