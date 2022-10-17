@@ -1,4 +1,4 @@
-name: ci
+name: ci/cd
 on:
   push:
     paths-ignore:
@@ -10,7 +10,7 @@ on:
 env:
   DEFAULT_GO_VERSION: 1.19
 jobs:
-  test-build:
+  ci:
     runs-on: ubuntu-latest
     steps:
       - name: Install Go
