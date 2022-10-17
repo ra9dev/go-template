@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/ra9dev/shutdown"
 	"net"
 	"net/http"
 	"time"
 
 	chi "github.com/go-chi/chi/v5"
+	"github.com/ra9dev/shutdown"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golang.org/x/sync/errgroup"

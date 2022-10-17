@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/ra9dev/shutdown"
 
+	"github.com/ra9dev/shutdown"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
