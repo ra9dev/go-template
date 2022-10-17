@@ -3,13 +3,13 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/ra9dev/shutdown"
 
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 
 	"github.com/ra9dev/go-template/internal/config"
 	"github.com/ra9dev/go-template/pkg/log"
-	"github.com/ra9dev/go-template/pkg/shutdown"
 	"github.com/ra9dev/go-template/pkg/tracing"
 )
 
@@ -57,7 +57,7 @@ func setupTracing(cfg config.Config) error {
 		return fmt.Errorf("failed to prepare tracing provider: %w", err)
 	}
 
-	shutdown.Add(func(ctx context.Context) {
+	shutdown.MustAdd("tracing", func(ctx context.Context) {
 		zap.S().Info("Shutting down tracing provider")
 
 		if err = provider.Shutdown(ctx); err != nil {
@@ -78,7 +78,7 @@ func setupLogger(cfg config.Config) error {
 		return fmt.Errorf("failed to prepare logger: %w", err)
 	}
 
-	shutdown.Add(func(_ context.Context) {
+	shutdown.MustAdd("logger", func(_ context.Context) {
 		zap.S().Infof("Flushing log buffer...")
 
 		// ignoring err because there is no buffer for stderr

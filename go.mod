@@ -4,6 +4,7 @@ go 1.19
 
 require (
 	github.com/go-chi/chi/v5 v5.0.7
+	github.com/ra9dev/shutdown v1.0.0
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0
 	github.com/swaggo/http-swagger v1.3.3

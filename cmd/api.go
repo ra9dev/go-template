@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"github.com/ra9dev/shutdown"
 	"net"
 	"net/http"
 	"time"
@@ -18,7 +19,6 @@ import (
 	adminAPI "github.com/ra9dev/go-template/internal/api/http/admin"
 	"github.com/ra9dev/go-template/internal/config"
 	example "github.com/ra9dev/go-template/pb"
-	"github.com/ra9dev/go-template/pkg/shutdown"
 )
 
 const (
@@ -111,7 +111,9 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 			WriteTimeout: writeTimeout,
 		}
 
-		shutdown.Add(func(ctx context.Context) {
+		shutdownKey := fmt.Sprintf("http:%d", port)
+
+		shutdown.MustAdd(shutdownKey, func(ctx context.Context) {
 			zap.S().Infof("Shutting down HTTP on %s...", addr)
 
 			if err := srv.Shutdown(ctx); err != nil {
@@ -132,7 +134,9 @@ func newGRPCServer(port uint) *grpc.Server {
 
 	example.RegisterGreeterServer(srv, exampleService)
 
-	shutdown.Add(func(ctx context.Context) {
+	shutdownKey := fmt.Sprintf("grpc:%d", port)
+
+	shutdown.MustAdd(shutdownKey, func(ctx context.Context) {
 		zap.S().Infof("Shutting down GRPC on :%d...", port)
 		srv.GracefulStop()
 		zap.S().Info("GRPC shutdown succeeded!")
