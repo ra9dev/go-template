@@ -15,10 +15,12 @@ import (
 	"google.golang.org/grpc"
 
 	grpcAPI "github.com/ra9dev/go-template/internal/api/grpc"
-	adminAPI "github.com/ra9dev/go-template/internal/api/http/admin"
+	httpAPI "github.com/ra9dev/go-template/internal/api/http"
 	"github.com/ra9dev/go-template/internal/config"
 	example "github.com/ra9dev/go-template/pb"
 	"github.com/ra9dev/go-template/pkg/sre/log"
+	tracedGRPC "github.com/ra9dev/go-template/pkg/sre/tracing/transport/grpc"
+	tracedHTTP "github.com/ra9dev/go-template/pkg/sre/tracing/transport/http"
 )
 
 const (
@@ -74,18 +76,22 @@ func httpSrvRun(ctx context.Context, srv *http.Server) error {
 	return nil
 }
 
-func newHTTPClientHandler() *chi.Mux {
-	mux := chi.NewMux()
+func newHTTPClientHandler() chi.Router {
+	tracedRouter := tracedHTTP.NewRouter(tracedHTTP.NewParams("client_api"))
+	api := httpAPI.NewClientAPI()
 
-	return mux
+	tracedRouter.Mount("/v1", api.NewRouter())
+
+	return tracedRouter
 }
 
-func newHTTPAdminHandler() *chi.Mux {
-	mux := chi.NewMux()
+func newHTTPAdminHandler() chi.Router {
+	tracedRouter := tracedHTTP.NewRouter(tracedHTTP.NewParams("admin_api"))
+	api := httpAPI.NewAdminAPI()
 
-	mux.Mount("/v1", adminAPI.NewRouter())
+	tracedRouter.Mount("/v1", api.NewRouter())
 
-	return mux
+	return tracedRouter
 }
 
 func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
@@ -135,7 +141,7 @@ func grpcSrvRun(ctx context.Context, port uint) error {
 }
 
 func newGRPCServer(port uint) *grpc.Server {
-	srv := grpc.NewServer()
+	srv := tracedGRPC.NewServer(tracedGRPC.NewParams())
 	exampleService := grpcAPI.NewExampleService()
 
 	example.RegisterGreeterServer(srv, exampleService)

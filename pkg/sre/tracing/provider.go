@@ -60,6 +60,7 @@ func NewProvider(config Config) (*Provider, error) {
 	}
 
 	provider := sdktrace.NewTracerProvider(
+		sdktrace.WithSampler(sdktrace.AlwaysSample()),
 		sdktrace.WithBatcher(exp),
 		sdktrace.WithResource(res),
 	)
