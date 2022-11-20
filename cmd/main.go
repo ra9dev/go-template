@@ -23,15 +23,15 @@ func main() {
 
 	cfg, err := config.NewConfig()
 	if err != nil {
-		log.Fatalf(ctx, "failed to prepare config: %v", err)
+		log.Panicf(ctx, "failed to prepare config: %v", err)
 	}
 
 	if err = setupLogger(cfg); err != nil {
-		log.Fatal(ctx, err)
+		log.Panic(ctx, err)
 	}
 
 	if err = setupTracing(cfg); err != nil {
-		log.Fatal(ctx, err)
+		log.Panic(ctx, err)
 	}
 
 	rootCmd.AddCommand(

@@ -29,8 +29,8 @@ Template for productive high-tech creators
 
 ### Database
 
-- [Database](./docker-compose.yml) for local development ([postgres](./.ra9/make/db.make) by default) 💾
-- [Migrations engine](https://github.com/golang-migrate/migrate) with predefined [make scripts](./.ra9/make/db.make) 🎼
+- [Database](./docker-compose.yml) for local development ([postgres](db.make) by default) 💾
+- [Migrations engine](https://github.com/golang-migrate/migrate) with predefined [make scripts](db.make) 🎼
 
 ### Site Reliability Engineering
 
