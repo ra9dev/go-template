@@ -108,7 +108,7 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 		shutdownKey := fmt.Sprintf("http:%d", port)
 
 		shutdown.MustAdd(shutdownKey, func(ctx context.Context) {
-			log.NoContext().Infof("Shutting down HTTP on %s...", addr)
+			log.NoContext().Infof("Shutting down HTTP%s...", addr)
 
 			if err := srv.Shutdown(ctx); err != nil {
 				log.NoContext().Errorf("HTTP shutdown failed: %v", err)
@@ -116,7 +116,7 @@ func newHTTPServer(port uint) func(handler http.Handler) *http.Server {
 				return
 			}
 
-			log.NoContext().Info("HTTP shutdown succeeded!")
+			log.NoContext().Infof("HTTP%s shutdown succeeded!", addr)
 		})
 
 		return &srv
@@ -149,11 +149,11 @@ func newGRPCServer(port uint) *grpc.Server {
 	shutdownKey := fmt.Sprintf("grpc:%d", port)
 
 	shutdown.MustAdd(shutdownKey, func(ctx context.Context) {
-		log.NoContext().Infof("Shutting down GRPC on :%d...", port)
+		log.NoContext().Infof("Shutting down GRPC:%d...", port)
 
 		srv.GracefulStop()
 
-		log.NoContext().Info("GRPC shutdown succeeded!")
+		log.NoContext().Infof("GRPC:%d shutdown succeeded!", port)
 	})
 
 	return srv

@@ -6,7 +6,7 @@ require (
 	github.com/go-chi/chi/v5 v5.0.7
 	github.com/go-chi/render v1.0.2
 	github.com/go-ozzo/ozzo-validation/v4 v4.3.0
-	github.com/ra9dev/shutdown v1.0.0
+	github.com/ra9dev/shutdown v1.0.2
 	github.com/riandyrn/otelchi v0.5.0
 	github.com/spf13/cobra v1.5.0
 	github.com/spf13/viper v1.12.0

@@ -211,6 +211,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
 github.com/ra9dev/shutdown v1.0.0 h1:ihMXVK+UKYnzsgvCkrzIJihuFbTz80ufjaltIi1b6Yg=
 github.com/ra9dev/shutdown v1.0.0/go.mod h1:kP40t14LY9eFNGai1Y9mkgSomzmT6KHomklgPXeaWFs=
+github.com/ra9dev/shutdown v1.0.2 h1:+E7E3dSI3y8vSMfvxtx2thKbE3T2tEIn/aK1pliEOTA=
+github.com/ra9dev/shutdown v1.0.2/go.mod h1:kP40t14LY9eFNGai1Y9mkgSomzmT6KHomklgPXeaWFs=
 github.com/riandyrn/otelchi v0.5.0 h1:MJgGWsK8678BEgcFK0bXN0KCT+cmZenrLbfwcVdmMno=
 github.com/riandyrn/otelchi v0.5.0/go.mod h1:TdZGrioq34o3UK86q/3v220f4Zv/UOlffx74hSWlZsQ=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=

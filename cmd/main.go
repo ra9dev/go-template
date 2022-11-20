@@ -13,7 +13,9 @@ import (
 )
 
 func main() {
-	ctx := shutdown.Context()
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	rootCmd := &cobra.Command{
 		Use:   "go-template",
 		Short: "Main entry-point command for the application",
@@ -32,17 +34,34 @@ func main() {
 		log.Fatal(ctx, err)
 	}
 
-	defer gracefulShutdown()
-
 	rootCmd.AddCommand(
 		APIServerCMD(cfg),
 	)
 
-	if err = rootCmd.ExecuteContext(shutdown.Context()); err != nil {
-		log.Errorf(ctx, "failed to execute root cmd: %v", err)
+	done := make(chan struct{})
+	gracefulShutdownDone := shutdown.Wait()
+
+	go func() {
+		defer close(done)
+
+		defer cancel()
+
+		if shutdownErr := <-gracefulShutdownDone; shutdownErr != nil {
+			log.NoContext().Errorf("failed to shutdown: %v", err)
+
+			return
+		}
+
+		log.NoContext().Info("Graceful shutdown completed!")
+	}()
+
+	if err = rootCmd.ExecuteContext(ctx); err != nil {
+		log.NoContext().Errorf("failed to execute root cmd: %v", err)
 
 		return
 	}
+
+	<-done
 }
 
 func setupTracing(cfg config.Config) error {
@@ -92,14 +111,4 @@ func setupLogger(cfg config.Config) error {
 	})
 
 	return nil
-}
-
-func gracefulShutdown() {
-	if shutdownErr := shutdown.Wait(); shutdownErr != nil {
-		log.NoContext().Error(shutdownErr)
-
-		return
-	}
-
-	log.NoContext().Infof("Shutdown completed in %.1f seconds", shutdown.Timeout().Seconds())
 }
