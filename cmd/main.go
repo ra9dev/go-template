@@ -47,7 +47,7 @@ func main() {
 		defer cancel()
 
 		if shutdownErr := <-gracefulShutdownDone; shutdownErr != nil {
-			log.NoContext().Errorf("failed to shutdown: %v", err)
+			log.NoContext().Errorf("failed to shutdown: %v", shutdownErr)
 
 			return
 		}
