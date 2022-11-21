@@ -12,7 +12,7 @@ COPY . .
 RUN go build -v -o app cmd/*.go
 
 
-FROM scratch
+FROM alpine
 
 WORKDIR /usr/src/app
 
