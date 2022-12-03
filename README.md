@@ -50,6 +50,7 @@ View your traces at [Jaeger UI](http://localhost:16686/) 🔎
   - QUIC
   - multi-transport handlers
 - Dynamic configuration via etcd/consul/etc
+- CLI to create a service
 
 ## Star History
 
