@@ -1,8 +1,11 @@
 # go-template
 
-[![ci](https://github.com/ra9dev/go-template/actions/workflows/cicd.yaml/badge.svg)](https://github.com/ra9dev/go-template/actions/workflows/cicd.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/ra9dev/go-template)](https://goreportcard.com/report/github.com/ra9dev/go-template)
+[![ci/cd](https://github.com/ra9dev/go-template/actions/workflows/cicd.yaml/badge.svg)](https://github.com/ra9dev/go-template/actions/workflows/cicd.yaml)
 [![Documentation](https://godoc.org/github.com/ra9dev/go-template?status.svg)](https://pkg.go.dev/mod/github.com/ra9dev/go-template)
+[![Release](https://img.shields.io/github/release/ra9dev/go-template.svg)](https://github.com/ra9dev/go-template/releases/latest)
+[![Sourcegraph](https://sourcegraph.com/github.com/ra9dev/go-template/-/badge.svg)](https://sourcegraph.com/github.com/ra9dev/go-template?badge)
+
 
 Template for productive high-tech creators
 
