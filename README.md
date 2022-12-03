@@ -4,7 +4,6 @@
 [![ci/cd](https://github.com/ra9dev/go-template/actions/workflows/cicd.yaml/badge.svg)](https://github.com/ra9dev/go-template/actions/workflows/cicd.yaml)
 [![Documentation](https://godoc.org/github.com/ra9dev/go-template?status.svg)](https://pkg.go.dev/mod/github.com/ra9dev/go-template)
 [![Release](https://img.shields.io/github/release/ra9dev/go-template.svg)](https://github.com/ra9dev/go-template/releases/latest)
-[![Sourcegraph](https://sourcegraph.com/github.com/ra9dev/go-template/-/badge.svg)](https://sourcegraph.com/github.com/ra9dev/go-template?badge)
 
 
 Template for productive high-tech creators
@@ -51,3 +50,8 @@ View your traces at [Jaeger UI](http://localhost:16686/) 🔎
   - QUIC
   - multi-transport handlers
 - Dynamic configuration via etcd/consul/etc
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=ra9dev/go-template&type=Date)](https://star-history.com/#ra9dev/go-template&Date)
+
