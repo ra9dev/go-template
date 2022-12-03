@@ -1,20 +1,63 @@
 run:
   skip-dirs:
     - vendor
-    - pb
-    - docs
   modules-download-mode: mod
 
 linters:
-  enable-all: true
-  disable:
-    - gochecknoinits
-    - gochecknoglobals
-    - gci
-    - exhaustivestruct
-    - exhaustive
-    - exhaustruct
-    - godot
+  disable-all: true
+  enable:
+    - asciicheck
+    - bodyclose
+    - cyclop
+    - decorder
+    - depguard
+    - dogsled
+    - dupl
+    - durationcheck
+    - errcheck
+    - errchkjson
+    - errname
+    - errorlint
+    - execinquery
+    - exportloopref
+    - forcetypeassert
+    - gocognit
+    - goconst
+    - gocritic
+    - gocyclo
+    - gofmt
+    - gofumpt
+    - goheader
+    - goimports
+    - gomoddirectives
+    - gomodguard
+    - gomnd
+    - gosec
+    - gosimple
+    - govet
+    - importas
+    - ineffassign
+    - lll
+    - makezero
+    - misspell
+    - nakedret
+    - nestif
+    - nilerr
+    - nilnil
+    - noctx
+    - paralleltest
+    - prealloc
+    - predeclared
+    - revive
+    - rowserrcheck
+    - sqlclosecheck
+    - unconvert
+    - unused
+    - unparam
+    - wastedassign
+    - wrapcheck
+    - whitespace
+    - wsl
 
 issues:
   # Restricts maximum count of issues to display with the same text, and show all instead.
@@ -24,7 +67,6 @@ issues:
     - Line contains TODO/BUG/FIXME
 
 linters-settings:
-
   tagliatelle:
     # Check the struck tag name case.
     case:
@@ -37,7 +79,7 @@ linters-settings:
     # The longest distance, in source lines, that is being considered a "small scope".
     # Variables used in at most this many lines will be ignored.
     # Default: 5
-    max-distance: 10
+    max-distance: 20
     # The minimum length of a variable's name that is considered "long".
     # Variable names that are at least this long will be ignored.
     # Default: 3
@@ -65,13 +107,14 @@ linters-settings:
     ignore-decls:
       - w http.ResponseWriter
       - r *http.Request
-  ireturn:
-    allow:
-      - anon
-      - error
-      - empty
-      - stdlib
-      # You can specify idiomatic endings for interface
-      - (or|er)$
-      # Your custom interfaces go here:
-      - github.com/ra9dev/pkg/tracing
+  wsl:
+    # Allow multiple var/declaration statements to be cuddled.
+    # Default: false
+    allow-cuddle-declarations: true
+    # Causes an error when an If statement that checks an error variable doesn't
+    # cuddle with the assignment of that variable.
+    # Default: false
+    enforce-err-cuddling: true
+  wrapcheck:
+    ignorePackageGlobs:
+      - google.golang.org/grpc/status
