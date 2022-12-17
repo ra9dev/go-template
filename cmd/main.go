@@ -39,26 +39,25 @@ func main() {
 	)
 
 	done := make(chan struct{})
-	gracefulShutdownDone := shutdown.Wait()
 
 	go func() {
 		defer close(done)
 
 		defer cancel()
 
-		if shutdownErr := <-gracefulShutdownDone; shutdownErr != nil {
-			log.NoContext().Errorf("failed to shutdown: %v", shutdownErr)
+		if shutdownErr := shutdown.Wait(); shutdownErr != nil {
+			log.NoContext().Errorf("failed to shut down: %v", shutdownErr)
 
 			return
 		}
 
-		log.NoContext().Info("Graceful shutdown completed!")
+		log.NoContext().Info("Shutdown has been completed!")
 	}()
 
 	if err = rootCmd.ExecuteContext(ctx); err != nil {
-		log.NoContext().Errorf("failed to execute root cmd: %v", err)
+		err = fmt.Errorf("failed to execute root cmd: %w", err)
 
-		return
+		log.NoContext().Fatal(err)
 	}
 
 	<-done

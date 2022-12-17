@@ -213,6 +213,8 @@ github.com/ra9dev/shutdown v1.0.0 h1:ihMXVK+UKYnzsgvCkrzIJihuFbTz80ufjaltIi1b6Yg
 github.com/ra9dev/shutdown v1.0.0/go.mod h1:kP40t14LY9eFNGai1Y9mkgSomzmT6KHomklgPXeaWFs=
 github.com/ra9dev/shutdown v1.0.2 h1:+E7E3dSI3y8vSMfvxtx2thKbE3T2tEIn/aK1pliEOTA=
 github.com/ra9dev/shutdown v1.0.2/go.mod h1:kP40t14LY9eFNGai1Y9mkgSomzmT6KHomklgPXeaWFs=
+github.com/ra9dev/shutdown v1.1.0 h1:+J3K9O8Lofob7ZJ483JXshBLLNgY6aCFh1T1CDf/OPs=
+github.com/ra9dev/shutdown v1.1.0/go.mod h1:kP40t14LY9eFNGai1Y9mkgSomzmT6KHomklgPXeaWFs=
 github.com/riandyrn/otelchi v0.5.0 h1:MJgGWsK8678BEgcFK0bXN0KCT+cmZenrLbfwcVdmMno=
 github.com/riandyrn/otelchi v0.5.0/go.mod h1:TdZGrioq34o3UK86q/3v220f4Zv/UOlffx74hSWlZsQ=
 github.com/rogpeppe/fastuuid v1.2.0/go.mod h1:jVj6XXZzXRy/MSR5jhDC/2q6DgLz+nrA6LYCDYWNEvQ=
